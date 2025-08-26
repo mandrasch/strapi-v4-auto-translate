@@ -1,146 +1,169 @@
-const { cleanData } = require('./strapi-plugin-translate/clean-data')
-const { updateUids } = require('./strapi-plugin-translate/update-uids')
-const { removeUids } = require('./strapi-plugin-translate/remove-uids')
-const { filterAllDeletedFields } = require('./strapi-plugin-translate/delete-fields')
+const { cleanData } = require('./strapi-plugin-translate/clean-data');
+const { updateUids } = require('./strapi-plugin-translate/update-uids');
+const { removeUids } = require('./strapi-plugin-translate/remove-uids');
+const { filterAllDeletedFields } = require('./strapi-plugin-translate/delete-fields');
 
 /**
  * Duplicate a component inside a dynamic zone to avoid relational ID issues
  */
 function duplicateComponent(component) {
-  const newComp = { ...component }
-  delete newComp.id
-  delete newComp.createdBy
-  delete newComp.updatedBy
-  delete newComp.createdAt
-  delete newComp.updatedAt
-  return newComp
+  const newComp = { ...component };
+  delete newComp.id;
+  delete newComp.createdBy;
+  delete newComp.updatedBy;
+  delete newComp.createdAt;
+  delete newComp.updatedAt;
+  return newComp;
 }
 
 async function autoTranslateIfNeeded(event) {
-  const { result, params } = event
-  const strapi = global.strapi
+  const { result, params } = event;
+  const strapi = global.strapi;
 
-  if (!result.locale || result.locale !== 'en') return
+  // Only handle content updates for 'en' (main source)
+  if (!result.locale || result.locale !== 'en') return;
 
   // Prevent deathloop
-  if (params?.meta?.translatedByPlugin) return
+  if (params?.meta?.translatedByPlugin) return;
 
-  console.log('--------------------------------------------------------')
-  console.log('autoTranslateIfNeeded running for locale:', result.locale)
-  console.log('params.data:', JSON.stringify(params.data))
-
-  const contentTypeUid = result.__contentTypeUid || event.model?.uid
-  if (!contentTypeUid) {
-    console.error('[translate] Could not determine contentTypeUid:', { result, model: event.model })
-    return
+  // Only run if the entry is published
+  if (!result.publishedAt) {
+    console.log('[translate] Entry is not published yet, skipping translation.');
+    return;
   }
 
-  const contentSchema = strapi.contentTypes[contentTypeUid]
-  if (!contentSchema) {
-    console.error('[translate] Content type not found:', contentTypeUid)
-    return
-  }
+  const contentTypeUid = result.__contentTypeUid || event.model?.uid;
+  if (!contentTypeUid) return;
 
-  const targetLocales = ['de', 'hu']
-  const translatableFields = ['title', 'heroTeaser'] // add your fields
-  const dynamicZoneFields = ['contents']
-  const localizedIds = []
+  const contentSchema = strapi.contentTypes[contentTypeUid];
+  if (!contentSchema) return;
+
+  const targetLocales = ['de', 'hu'];
+  const translatableFields = ['title', 'heroTeaser'];
+  const dynamicZoneFields = ['contents'];
+  const localizedIds = [];
 
   // Create/update localized entries
   for (const targetLocale of targetLocales) {
-    if (targetLocale === 'en') continue
+    if (targetLocale === 'en') continue;
 
-    let localized = null
+    let localized = null;
     try {
       localized = await strapi.db.query(contentTypeUid).findOne({
         where: { locale: targetLocale, localizations: { id: result.id } },
         populate: { localizations: true },
-      })
-      console.log(`[translate] Existing localized entry for ${targetLocale}:`, localized ? localized.id : 'none')
+      });
     } catch (err) {
-      console.error(`[translate] Failed fetching localized entry for ${targetLocale}:`, err)
+      console.error(`[translate] Failed fetching localized entry for ${targetLocale}:`, err);
     }
 
     try {
-      const translatedData = { ...result }
-      const timestamp = new Date().toLocaleTimeString()
+      const translatedData = { ...result };
+      const timestamp = new Date().toLocaleTimeString();
 
       // Simulate translation
       translatableFields.forEach(f => {
         if (translatedData[f]) {
-          translatedData[f] = `${translatedData[f]} (TRANSLATED - ${timestamp})`
+          translatedData[f] = `${translatedData[f]} (TRANSLATED - ${timestamp})`;
         }
-      })
+      });
 
       // Duplicate dynamic zones
       dynamicZoneFields.forEach(f => {
         if (Array.isArray(translatedData[f])) {
-          translatedData[f] = translatedData[f].map(duplicateComponent)
+          translatedData[f] = translatedData[f].map(duplicateComponent);
         }
-      })
+      });
 
       const translatedRelations = strapi.config.get('plugin.translate')?.regenerateUids
         ? await updateUids(translatedData, contentTypeUid)
-        : removeUids(translatedData, contentTypeUid)
+        : removeUids(translatedData, contentTypeUid);
 
-      const cleanedData = cleanData(filterAllDeletedFields(translatedRelations, contentSchema), contentSchema, true)
+      const cleanedData = cleanData(filterAllDeletedFields(translatedRelations, contentSchema), contentSchema, true);
 
-      const mysqlSafeData = { ...cleanedData }
-      delete mysqlSafeData.createdBy
-      delete mysqlSafeData.updatedBy
-      delete mysqlSafeData.createdAt
-      delete mysqlSafeData.updatedAt
+      const mysqlSafeData = { ...cleanedData };
+      delete mysqlSafeData.createdBy;
+      delete mysqlSafeData.updatedBy;
+      delete mysqlSafeData.createdAt;
+      delete mysqlSafeData.updatedAt;
+
+      // Important!
+      delete mysqlSafeData.localizations
 
       // Convert relational fields to IDs
-      const relationalFields = ['localizations']
+      const relationalFields = ['localizations'];
       relationalFields.forEach(f => {
         if (Array.isArray(mysqlSafeData[f])) {
-          mysqlSafeData[f] = mysqlSafeData[f].map(item => (item?.id ? item.id : item))
+          mysqlSafeData[f] = mysqlSafeData[f].map(item => (item?.id ? item.id : item));
         } else if (mysqlSafeData[f]?.id) {
-          mysqlSafeData[f] = mysqlSafeData[f].id
+          mysqlSafeData[f] = mysqlSafeData[f].id;
         }
-      })
+      });
 
       // Create or update localized entry
-      let entryId
+      let entryId;
+
+      // Don't mess with localizations here!
       if (localized) {
-        const updated = await strapi.db.query(contentTypeUid).update({
+        await strapi.db.query(contentTypeUid).update({
           where: { id: localized.id },
-          data: { ...mysqlSafeData, localizations: localized.localizations.map(l => l.id) },
+          data: { ...mysqlSafeData },
           meta: { translatedByPlugin: true },
-        })
-        entryId = localized.id
-        console.log(`[translate] Updated localized entry: ${localized.id}`)
+        });
+        entryId = localized.id;
       } else {
         const created = await strapi.db.query(contentTypeUid).create({
-          data: { ...mysqlSafeData, locale: targetLocale, localizations: [result.id] },
+          data: { ...mysqlSafeData, locale: targetLocale },
           meta: { translatedByPlugin: true },
-        })
-        entryId = created.id
-        console.log(`[translate] Created new localized entry: ${created.id}`)
+        });
+        entryId = created.id;
       }
 
-      localizedIds.push(entryId)
+      localizedIds.push(entryId);
     } catch (err) {
-      console.error(`[translate] Failed simulating translation for ${targetLocale}:`, err)
+      console.error(`[translate] Failed simulating translation for ${targetLocale}:`, err);
     }
   }
 
-  // Finally, update all entries (original + localized) to include all localized IDs
-  const allLocalizedIds = [result.id, ...localizedIds]
-  for (const id of allLocalizedIds) {
-    try {
-      await strapi.db.query(contentTypeUid).update({
-        where: { id },
-        data: { localizations: allLocalizedIds },
-        meta: { translatedByPlugin: true },
-      })
-    } catch (err) {
-      console.error(`[translate] Failed updating localizations for entry ${id}:`, err)
-    }
+  // Finally sync connected localizations
+
+  let allIds = [];
+  try {
+    const entries = await strapi.db.query(contentTypeUid).findMany({
+      where: {
+        $or: [
+          { id: result.id },
+          { localizations: { id: result.id } },
+        ],
+      },
+      select: ['id', 'publishedAt'], // include publishedAt for draft/publish check
+    });
+
+    // Only include published entries in the sync
+    allIds = entries
+      .filter(e => e.publishedAt)   // skip drafts
+      .map(e => e.id);
+  } catch (err) {
+    console.error('[translate] Failed fetching all localized entries:', err);
   }
 
-  console.log('[translate] Synced all localized entries with IDs:', allLocalizedIds.join(','))
+  // Combine with newly created/updated localized IDs (they are all published now)
+  const finalIds = Array.from(new Set([...allIds, ...localizedIds]));
+
+  // Update **all published entries in the set** to point to each other
+  for (const id of finalIds) {
+    const localizationsForThisEntry = finalIds.filter(x => x !== id);
+
+    await strapi.db.query(contentTypeUid).update({
+      where: { id },
+      data: { localizations: localizationsForThisEntry },
+      meta: { translatedByPlugin: true },
+    });
+
+    console.log(`[translate] Updated entry ${id} localizations:`, localizationsForThisEntry);
+  }
+
+  console.log(`[translate] Synced all published entries in set with IDs: ${finalIds.join(',')}`);
 }
 
-module.exports = { autoTranslateIfNeeded }
+module.exports = { autoTranslateIfNeeded };
