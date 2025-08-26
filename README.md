@@ -31,6 +31,8 @@ See as well:
 
 Discord: https://discord.com/channels/811989166782021633/1409925483885494313/1409925483885494313
 
+**Screencast of the current issue: https://www.youtube.com/watch?v=y0dX_a2ECzE**
+
 
 ## Local Setup
 
