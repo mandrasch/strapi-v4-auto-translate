@@ -16,14 +16,18 @@ See
 
 ### Current state
 
-1. First step: Modify updated content in components/relations properly (not even translated yet)
+> My goal: Editors create/update english entries, entry get's copied over to other languages and update fields are translated via https://www.npmjs.com/package/strapi-provider-translate-deepl
 
-```
-[translate] Auto-translate failed for id=1 → zh: Error: insert into `pages` (`created_at`, `created_by_id`, `hero_teaser`, `locale`, `published_at`, `title`, `updated_at`, `updated_by_id`) values ('2025-08-26 12:25:42.056', '{\"id\":1,\"firstname\":\"Arnold\",\"lastname\":\"Admin\",\"username\":null,\"email\":\"admin@example.com\",\"password\":\"xxx",\"resetPasswordToken\":null,\"registrationToken\":null,\"isActive\":true,\"blocked\":false,\"preferedLanguage\":null,\"createdAt\":\"2025-08-26T09:10:17.776Z\",\"updatedAt\":\"2025-08-26T09:10:17.776Z\"}', 'Lorem12 2ipsum dolor sit amet, consetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.因此，我们对他们提出了指控，并对他们进行了公正的审判。Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.因此，我们对他们提出了指控，并对他们进行了公正的审判。Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.', 'zh', '2025-08-26 12:29:12.579', '测试', '2025-08-26 12:32:55.441', '{\"id\":1,\"firstname\":\"Arnold\",\"lastname\":\"Admin\",\"username\":null,\"email\":\"admin@example.com\",\"password\":\"xxx\",\"resetPasswordToken\":null,\"registrationToken\":null,\"isActive\":true,\"blocked\":false,\"preferedLanguage\":null,\"createdAt\":\"2025-08-26T09:10:17.776Z\",\"updatedAt\":\"2025-08-26T09:10:17.776Z\"}') - Incorrect integer value: '{"id":1,"firstname":"Arnold","lastname":"Admin","username":null,"email":"admin@example.com","password":"$2a$10$6TyjKg3Nd6vEHk677' for column 'created_by_id' at row 1
-```
+> BUT I'm already stuck in copying over and updating the localized entry version, without even translating it. :exploding_head:
 
-2. Detect change fields and only translate them (reduce API call cost)
-2. Translate (updated) fields
+> The challenge seems to be that draft and published entries have separate rows in the db?
+
+> The issue:
+
+> Publishing and copying content over to localized entries work's fine.
+
+> But when I update my already published english entry, the connection to the other (published) entries get's lost. And they end up in the default english language :/
+
 
 
 
