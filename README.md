@@ -13,7 +13,6 @@ Trying to use
 See as well:
 
 - https://github.com/Fekide/strapi-plugin-translate/issues/284
-- https://github.com/Fekide/strapi-plugin-translate/issues/512
 - https://github.com/Fekide/strapi-plugin-translate/discussions/283
 
 ### Current state
@@ -30,7 +29,7 @@ See as well:
 >
 > But when I update my already published english entry, the connection to the other (published) entries get's lost. And they end up in the default english language :/
 
-
+Discord: https://discord.com/channels/811989166782021633/1409925483885494313/1409925483885494313
 
 
 ## Local Setup
