@@ -10,9 +10,11 @@ Trying to use
 - https://www.npmjs.com/package/strapi-provider-translate-deepl
 
 
-See
+See as well:
 
+- https://github.com/Fekide/strapi-plugin-translate/issues/284
 - https://github.com/Fekide/strapi-plugin-translate/issues/512
+- https://github.com/Fekide/strapi-plugin-translate/discussions/283
 
 ### Current state
 
