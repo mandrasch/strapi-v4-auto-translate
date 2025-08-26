@@ -51,9 +51,7 @@ docker compose exec -T strapiDB sh -c \
 
 User: `admin@example.com`, pw: `Password1!`
 
-Tested on Mac M processor / Docker Desktop. Make sure to stop other projects with MySQL/DB with `docker compose down`.
-
-6. Add deepl API keys to `.env`
+6. In future, not yet: Add deepl API keys to `.env`
 
 ## Usage
 
@@ -89,7 +87,7 @@ TODO: Better approach, do it with `docker compose exex strapi ...`, but mount ca
 
 ## How was this created?
 
-See base repository for all details.
+See base repository template for all details.
 
 Steps for this repo:
 
