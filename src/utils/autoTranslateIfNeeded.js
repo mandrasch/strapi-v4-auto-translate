@@ -20,6 +20,12 @@ async function autoTranslateIfNeeded(event) {
   const { result, params } = event;
   const strapi = global.strapi;
 
+  // quick fix for cleaning up the db if deathloop occured
+  /*const contentTypeUid1 = 'api::page.page'; // Replace with your actual collection UID
+  await strapi.db.query(contentTypeUid1).deleteMany({
+    where: {}, // empty filter matches all entries
+  });*/
+
   // Only handle content updates for 'en' (main source)
   if (!result.locale || result.locale !== 'en') return;
 
@@ -125,32 +131,32 @@ async function autoTranslateIfNeeded(event) {
     }
   }
 
+  // TODO: Does not work, connections get lost after updating published EN entry
+
   // Finally sync connected localizations
 
+  // We need to do this because we might disable translation for some languages
+  // and the localization id connection would be lost
   let allIds = [];
   try {
     const entries = await strapi.db.query(contentTypeUid).findMany({
       where: {
         $or: [
-          { id: result.id },
-          { localizations: { id: result.id } },
+          { id: result.id },              // the original English entry
+          { localizations: { id: result.id } }, // any localized entries pointing to it
         ],
       },
-      select: ['id', 'publishedAt'], // include publishedAt for draft/publish check
+      select: ['id'], // we only need the IDs
     });
-
-    // Only include published entries in the sync
-    allIds = entries
-      .filter(e => e.publishedAt)   // skip drafts
-      .map(e => e.id);
+    allIds = entries.map(e => e.id); // extract the IDs
   } catch (err) {
     console.error('[translate] Failed fetching all localized entries:', err);
   }
 
-  // Combine with newly created/updated localized IDs (they are all published now)
+  // Combine with newly created/updated IDs
   const finalIds = Array.from(new Set([...allIds, ...localizedIds]));
 
-  // Update **all published entries in the set** to point to each other
+  // Update **all entries in the set** to point to each other
   for (const id of finalIds) {
     const localizationsForThisEntry = finalIds.filter(x => x !== id);
 
@@ -163,7 +169,7 @@ async function autoTranslateIfNeeded(event) {
     console.log(`[translate] Updated entry ${id} localizations:`, localizationsForThisEntry);
   }
 
-  console.log(`[translate] Synced all published entries in set with IDs: ${finalIds.join(',')}`);
+  console.log(`[translate] Synced all entries in set with IDs: ${finalIds.join(',')}`);
 }
 
 module.exports = { autoTranslateIfNeeded };
