@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_blocks_text_image_blocks",
+  "info": {
+    "displayName": "Text Image Block",
+    "icon": "landscape",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "linkToProduct": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}
