@@ -43,8 +43,8 @@ Local development playground for Strapi v4 with MySQL.
 Import database dump: 
 
 ```bash
-docker compose exec strapiDB sh -c \
-  'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" strapi' > dump.sql
+docker compose exec -T strapiDB sh -c \
+  'mysql -u root -p"$MYSQL_ROOT_PASSWORD" strapi' < dump.sql.gz
 ```
 
 5. Login to http://localhost:1337/admin/ 
