@@ -116,3 +116,6 @@ build
 
 # Allow SQL dump for demos
 !dump.sql.gz
+
+# For now, investigate later
+package-lock.json
