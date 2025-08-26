@@ -17,15 +17,15 @@ See
 ### Current state
 
 > My goal: Editors create/update english entries, entry get's copied over to other languages and update fields are translated via https://www.npmjs.com/package/strapi-provider-translate-deepl
-
+>
 > BUT I'm already stuck in copying over and updating the localized entry version, without even translating it. :exploding_head:
-
+>
 > The challenge seems to be that draft and published entries have separate rows in the db?
-
+>
 > The issue:
-
+>
 > Publishing and copying content over to localized entries work's fine.
-
+>
 > But when I update my already published english entry, the connection to the other (published) entries get's lost. And they end up in the default english language :/
 
 
