@@ -1,3 +1,7 @@
+// See
+// https://github.com/Fekide/strapi-plugin-translate/blob/main/plugin/server/controllers/translate.js
+// https://github.com/Fekide/strapi-plugin-translate/blob/main/plugin/server/services/translate.js
+
 const { cleanData } = require('./strapi-plugin-translate/clean-data');
 const { updateUids } = require('./strapi-plugin-translate/update-uids');
 const { removeUids } = require('./strapi-plugin-translate/remove-uids');
