@@ -61,7 +61,7 @@ User: `admin@example.com`, pw: `Password1!`
 
 ## Usage
 
-### Import database dump: 
+### Export database dump: 
 
 ```bash
 docker compose exec strapiDB sh -c \
