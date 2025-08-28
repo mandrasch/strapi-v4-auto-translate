@@ -28,7 +28,7 @@ async function autoTranslateEntry(event) {
       return;
     }
 
-    // The plugin should handle everything: create localizations + translate
+    // The plugin should handle everything: create localizations + translate + auto-publish
     const targetLocales = ['de', 'hu'];
 
     for (const targetLocale of targetLocales) {
@@ -36,10 +36,11 @@ async function autoTranslateEntry(event) {
         sourceLocale: 'en',
         targetLocale: targetLocale,
         contentType: contentTypeUid,
-        entityIds: [result.id]
+        entityIds: [result.id],
+        autoPublish: true  // Enable auto-publish for this batch job
       });
 
-      console.log(`[auto-translate] Triggered translation: ${result.id} (en -> ${targetLocale})`);
+      console.log(`[auto-translate] Triggered translation with auto-publish: ${result.id} (en -> ${targetLocale})`);
     }
 
   } catch (error) {
