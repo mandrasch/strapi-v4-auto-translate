@@ -4,6 +4,7 @@ module.exports = {
   },
 
   async afterUpdate(event) {
+    // TODO: needed? try without it, maybe wrong AI advice
     // Add small delay to avoid race condition
     setTimeout(async () => {
       await autoTranslateEntry(event);
