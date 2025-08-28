@@ -16,11 +16,22 @@ See as well:
 
 ### Current state
 
-Trying to use service of strapi plugin auto translate.
+Trying to use service of strapi plugin auto translate in lifecycle.
 
 **Current problem: create works, but update does not.**
 
-See
+```js
+  for (const targetLocale of targetLocales) {
+  console.log(`\n🔄 Starting translation for ${targetLocale}...`);
+
+  const batchResult = await translateService.batchTranslate({
+    sourceLocale: 'en',
+    targetLocale: targetLocale,
+    contentType: contentTypeUid,
+    entityIds: [result.id],
+    autoPublish: true
+  });
+```
 
 ## Old state - lifecycle manual try (not working)
 
