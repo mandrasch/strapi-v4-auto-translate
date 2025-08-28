@@ -9,7 +9,6 @@ Trying to use
 - https://www.npmjs.com/package/strapi-plugin-translate
 - https://www.npmjs.com/package/strapi-provider-translate-deepl
 
-
 See as well:
 
 - https://github.com/Fekide/strapi-plugin-translate/issues/284
@@ -17,26 +16,15 @@ See as well:
 
 ### Current state
 
-Update 28.08.2025: See branch https://github.com/mandrasch/strapi-v4-auto-translate/tree/use-translate-plugin-service as well, might be better to use the strapi translate plugin service? Are there dealbreakers?
+Trying to use service of strapi plugin auto translate.
 
-Before:
+**Current problem: create works, but update does not.**
 
-> My goal: Editors create/update english entries, entry get's copied over to other languages and update fields are translated via https://www.npmjs.com/package/strapi-provider-translate-deepl
->
-> BUT I'm already stuck in copying over and updating the localized entry version, without even translating it. :exploding_head:
->
-> The challenge seems to be that draft and published entries have separate rows in the db?
->
-> The issue:
->
-> Publishing and copying content over to localized entries work's fine.
->
-> But when I update my already published english entry, the connection to the other (published) entries get's lost. And they end up in the default english language :/
+See
 
-Discord: https://discord.com/channels/811989166782021633/1409925483885494313/1409925483885494313
+## Old state - lifecycle manual try (not working)
 
-**Screencast of the current issue: https://www.youtube.com/watch?v=y0dX_a2ECzE**
-
+See https://github.com/mandrasch/strapi-v4-auto-translate/tree/try-v1
 
 ## Local Setup
 
