@@ -27,7 +27,12 @@
       "target": "api::product.product"
     },
     "description": {
-      "type": "text"
+      "type": "text",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     }
   }
 }
