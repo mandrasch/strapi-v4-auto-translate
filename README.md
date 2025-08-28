@@ -17,6 +17,10 @@ See as well:
 
 ### Current state
 
+Update 28.08.2025: See branch https://github.com/mandrasch/strapi-v4-auto-translate/tree/use-translate-plugin-service as well, might be better to use the strapi translate plugin service? Are there dealbreakers?
+
+Before:
+
 > My goal: Editors create/update english entries, entry get's copied over to other languages and update fields are translated via https://www.npmjs.com/package/strapi-provider-translate-deepl
 >
 > BUT I'm already stuck in copying over and updating the localized entry version, without even translating it. :exploding_head:
