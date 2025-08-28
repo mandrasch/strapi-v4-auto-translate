@@ -9,11 +9,6 @@ Trying to use
 - https://www.npmjs.com/package/strapi-plugin-translate
 - https://www.npmjs.com/package/strapi-provider-translate-deepl
 
-See as well:
-
-- https://github.com/Fekide/strapi-plugin-translate/issues/284
-- https://github.com/Fekide/strapi-plugin-translate/discussions/283
-
 ### Current state
 
 Trying to use service of strapi plugin auto translate in lifecycle.
@@ -32,6 +27,12 @@ Trying to use service of strapi plugin auto translate in lifecycle.
     autoPublish: true
   });
 ```
+Primary discussion: https://github.com/Fekide/strapi-plugin-translate/discussions/528
+
+See as well:
+
+- https://github.com/Fekide/strapi-plugin-translate/issues/284
+- https://github.com/Fekide/strapi-plugin-translate/discussions/283
 
 ## Old state - lifecycle manual try (not working)
 
